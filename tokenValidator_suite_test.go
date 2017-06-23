@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGitserver(t *testing.T) {
+func TestFirebaseTokenValidator(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Firebase token validator Suite")
 }
