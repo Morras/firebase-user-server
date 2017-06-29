@@ -4,8 +4,9 @@ import (
 	"strings"
 )
 
+//This is cheating, header validator do not need it, claims validator needs ProjectId and the last two are needed by signature validator
 type ValidatorParams struct {
-	ProjectId, Kid string
+	ProjectId, Kid, Message string
 }
 
 type Validator interface {
@@ -46,7 +47,7 @@ func (tv *TokenValidator) Validate(token string) (bool, error) {
 
 	// We know this will succeed because the header validates
 	_, h := decodeRawHeader(header)
-	if !tv.signatureValidator.Validate(signature, ValidatorParams{Kid: h.Kid}) {
+	if !tv.signatureValidator.Validate(signature, ValidatorParams{Kid: h.Kid, Message: header + "." + claims}) {
 		return false, ErrSignatureValidationFailed
 	}
 

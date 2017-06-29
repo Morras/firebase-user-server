@@ -9,15 +9,15 @@ import (
 var _ = Describe("HeaderValidator", func() {
 
 	// alg = RS256 kid = 10
-	var validHeader = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIn0="
+	var validHeader = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIn0"
 	// alg = RSxxx kid = 10
-	var invalidAlgorithm = "eyJhbGciOiJSU3h4eCIsImtpZCI6IjEwIn0="
+	var invalidAlgorithm = "eyJhbGciOiJSU3h4eCIsImtpZCI6IjEwIn0"
 	// alg = RS256 no kid
 	var noKid = "eyJhbGciOiJSUzI1NiJ9"
 	// not json
-	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ=="
+	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
 	// invalid base64
-	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ="
+	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
 
 	var emptyParams = fjw.ValidatorParams{}
 

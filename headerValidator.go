@@ -17,7 +17,7 @@ type header struct {
 
 func decodeRawHeader(raw string) (bool, header) {
 
-	jsonStr, err := base64.StdEncoding.DecodeString(raw)
+	jsonStr, err := base64.RawURLEncoding.DecodeString(raw)
 	if err != nil {
 		log.Printf("Unable to validate header due to input not being Base64 %v", raw)
 		return false, header{}

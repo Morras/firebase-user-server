@@ -16,7 +16,7 @@ type claims struct {
 
 func decodeRawClaims(raw string) (bool, claims) {
 
-	jsonStr, err := base64.StdEncoding.DecodeString(raw)
+	jsonStr, err := base64.RawURLEncoding.DecodeString(raw)
 	if err != nil {
 		log.Printf("Unable to validate claims due to input not being Base64 %v", raw)
 		return false, claims{}
