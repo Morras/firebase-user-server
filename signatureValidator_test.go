@@ -38,6 +38,12 @@ var _ = Describe("SignatureValidator", func() {
 	headerPlusClaims := "eyJhbGciOiJSUzI1NiIsImtpZCI6IjhhMjJlOTQwZmEwYjAwNTBhN2E5MTBjOTRkM2YzNmVlNGM2OWEyZTQifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbmV1dHJpbm8tMTE1MSIsIm5hbWUiOiJNb3J0ZW4gUmFzbXVzc2VuIiwicGljdHVyZSI6Imh0dHBzOi8vbGg2Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tdGZfUTFzY1hpeTgvQUFBQUFBQUFBQUkvQUFBQUFBQUFBSGMvTUY3SWlUZ1VyNkkvcGhvdG8uanBnIiwiYXVkIjoibmV1dHJpbm8tMTE1MSIsImF1dGhfdGltZSI6MTQ5ODY3ODk5MSwidXNlcl9pZCI6IjZ4cndSMURIb1lndmNWOUUwY3ZvUEt1cG12RTIiLCJzdWIiOiI2eHJ3UjFESG9ZZ3ZjVjlFMGN2b1BLdXBtdkUyIiwiaWF0IjoxNDk4Njc4OTkxLCJleHAiOjE0OTg2ODI1OTEsImVtYWlsIjoibS5yYXNtdXNzZW44NEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwNTE3NTgxNDY0ODYxNjMxMjM3NyJdLCJlbWFpbCI6WyJtLnJhc211c3Nlbjg0QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0"
 	params := fjw.ValidatorParams{Kid: "TestKid", Message: headerPlusClaims}
 
+	// invalid base64
+	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ="
+
+	// valid base64 but invalid signature
+	var invalidSignature = "eyJhbGciOiJSUzI1NiJ9"
+
 	Context("Given a rejecting KeyFetcher", func() {
 		signatureValidator := fjw.NewSignatureValidator(&rejectingKeyFetcher{})
 		Context("And a valid input", func() {
@@ -66,7 +72,14 @@ var _ = Describe("SignatureValidator", func() {
 
 		Context("And the signature is invalid", func() {
 			It("Should return true", func() {
-				result := signatureValidator.Validate(validSignature+"Extrastuff", params)
+				result := signatureValidator.Validate(invalidSignature, params)
+				Expect(result).To(BeFalse())
+			})
+		})
+
+		Context("And invalid encoded signature", func() {
+			It("Should return false", func() {
+				result := signatureValidator.Validate(invalidBase64, params)
 				Expect(result).To(BeFalse())
 			})
 		})

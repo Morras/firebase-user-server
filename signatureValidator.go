@@ -30,13 +30,13 @@ func (sv *SignatureValidator) Validate(signature string, params ValidatorParams)
 	decodedSig, err := base64.RawURLEncoding.DecodeString(signature)
 
 	if err != nil {
-		log.Printf("Error decoding base64 %v, %v", err, []byte(signature))
+		log.Printf("Unable to validate signature as input signature is invalid base64 %v, %v", err, []byte(signature))
+		return false
 	}
 
 	hashed := sha256.Sum256([]byte(params.Message))
 
 	err = rsa.VerifyPKCS1v15(publicKey, crypto.SHA256, hashed[:], []byte(decodedSig))
-	log.Printf("hashed %v", hashed)
 	if err != nil {
 		log.Printf("Error verifying signature %v for message %v with publicKey %v. Error was %v", signature, params.Message, publicKey, err)
 		return false
