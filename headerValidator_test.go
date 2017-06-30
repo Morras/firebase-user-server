@@ -17,7 +17,7 @@ var _ = Describe("HeaderValidator", func() {
 	// not json
 	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
 	// invalid base64
-	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
+	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ="
 
 	var emptyParams = fjw.ValidatorParams{}
 
