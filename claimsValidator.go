@@ -45,7 +45,7 @@ func (hv *ClaimsValidator) Validate(raw string, params ValidatorParams) bool {
 	}
 
 	now := time.Now().Unix()
-	if c.Iat >= now {
+	if c.Iat > now {
 		log.Printf("Unable to validate claims as they are issued in the future %v", c)
 		return false
 	}
