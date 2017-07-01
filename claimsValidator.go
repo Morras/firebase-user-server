@@ -55,12 +55,12 @@ func (hv *ClaimsValidator) Validate(raw string, params ValidatorParams) bool {
 		return false
 	}
 
-	if c.Iss != issuerPrefix+params.ProjectId {
+	if c.Iss != issuerPrefix+params.ProjectID {
 		log.Printf("Unable to validate claims due to invalid issuer %v", c)
 		return false
 	}
 
-	if c.Aud != params.ProjectId {
+	if c.Aud != params.ProjectID {
 		log.Printf("Unable to validate claims due to invalid audience %v", c)
 		return false
 	}

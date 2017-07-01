@@ -8,8 +8,8 @@ import (
 
 var _ = Describe("HeaderValidator", func() {
 
-	var projectId = "neutrino-1151"
-	var defaultParams = fjw.ValidatorParams{ProjectId: projectId}
+	var projectID = "neutrino-1151"
+	var defaultParams = fjw.ValidatorParams{ProjectID: projectID}
 
 	// not json
 	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"

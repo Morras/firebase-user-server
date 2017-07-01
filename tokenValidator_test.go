@@ -96,7 +96,7 @@ var _ = Describe("TokenValidator", func() {
 			It("Should pass claims part to header claims", func() {
 				tokenValidator.Validate(validToken)
 				Expect(claimsSpy.Input).To(BeIdenticalTo("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9"))
-				Expect(claimsSpy.Params.ProjectId).To(BeIdenticalTo("project id"))
+				Expect(claimsSpy.Params.ProjectID).To(BeIdenticalTo("project id"))
 			})
 
 			It("Should pass signature part to signature validator", func() {

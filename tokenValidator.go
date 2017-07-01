@@ -1,12 +1,13 @@
 package firebaseJwtValidator
 
 import (
+	"net/http"
 	"strings"
 )
 
-//This is cheating, header validator do not need it, claims validator needs ProjectId and the last two are needed by signature validator
+//This is cheating, header validator do not need it, claims validator needs ProjectID and the last two are needed by signature validator
 type ValidatorParams struct {
-	ProjectId, Kid, Message string
+	ProjectID, Kid, Message string
 }
 
 type Validator interface {
@@ -14,14 +15,21 @@ type Validator interface {
 }
 
 type TokenValidator struct {
-	projectId          string
+	projectID          string
 	headerValidator    Validator
 	claimsValidator    Validator
 	signatureValidator Validator
 }
 
-func NewTokenValidator(projectId string, headerValidator Validator, claimsValidator Validator, signatureValidator Validator) *TokenValidator {
-	t := &TokenValidator{projectId: projectId, headerValidator: headerValidator, claimsValidator: claimsValidator, signatureValidator: signatureValidator}
+func DefaultTokenValidator(projectID string) *TokenValidator {
+	return NewTokenValidator(projectID,
+		&HeaderValidator{},
+		&ClaimsValidator{},
+		NewSignatureValidator(NewGoogleKeyFetcher(&http.Client{})))
+}
+
+func NewTokenValidator(projectID string, headerValidator Validator, claimsValidator Validator, signatureValidator Validator) *TokenValidator {
+	t := &TokenValidator{projectID: projectID, headerValidator: headerValidator, claimsValidator: claimsValidator, signatureValidator: signatureValidator}
 	return t
 }
 
@@ -41,7 +49,7 @@ func (tv *TokenValidator) Validate(token string) (bool, error) {
 		return false, ErrHeaderValidationFailed
 	}
 
-	if !tv.claimsValidator.Validate(claims, ValidatorParams{ProjectId: tv.projectId}) {
+	if !tv.claimsValidator.Validate(claims, ValidatorParams{ProjectID: tv.projectID}) {
 		return false, ErrClaimsValidationFailed
 	}
 
