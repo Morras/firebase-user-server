@@ -5,7 +5,7 @@ import (
 
 	"crypto/x509"
 	"encoding/pem"
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -13,7 +13,7 @@ import (
 type rejectingKeyFetcher struct{}
 
 func (*rejectingKeyFetcher) FetchKey(kid string) (*rsa.PublicKey, error) {
-	return nil, fjw.ErrNoSuchKey
+	return nil, fjv.ErrNoSuchKey
 }
 
 type acceptingKeyFetcher struct {
@@ -36,7 +36,7 @@ var _ = Describe("SignatureValidator", func() {
 
 	validSignature := "EVvSD9mw1Hu0w8GiTa0O7zLl-0_izdTB-kiJHRl2npSYL-JUM56iw9wJqfT01j2YOnTXVSRae-pnxXEuBP7HWIOQWpOOkiKeTlRHA72yJbBrQlbBASzvKp12pND2WZjefR7MLnlqDN9nWYJn3qvPotOPGFCmGK0iFS2O1rluOZlUmX2N4DZC_5M8eBPW_FEIXyhMGDJiTUv8NoPhfKlD4sC38AQDEcCoyPM5LoqtT4fnr6AtPRHLMY7kR_oidab-HTQcRl8RuDqN9frsAhrWmMMIvbV_5m5RUELc0CTNcgzifGab-bpFV1voKk4a4zMvsoSmJYITZiAVWQxcWafsEQ"
 	headerPlusClaims := "eyJhbGciOiJSUzI1NiIsImtpZCI6IjhhMjJlOTQwZmEwYjAwNTBhN2E5MTBjOTRkM2YzNmVlNGM2OWEyZTQifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbmV1dHJpbm8tMTE1MSIsIm5hbWUiOiJNb3J0ZW4gUmFzbXVzc2VuIiwicGljdHVyZSI6Imh0dHBzOi8vbGg2Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tdGZfUTFzY1hpeTgvQUFBQUFBQUFBQUkvQUFBQUFBQUFBSGMvTUY3SWlUZ1VyNkkvcGhvdG8uanBnIiwiYXVkIjoibmV1dHJpbm8tMTE1MSIsImF1dGhfdGltZSI6MTQ5ODY3ODk5MSwidXNlcl9pZCI6IjZ4cndSMURIb1lndmNWOUUwY3ZvUEt1cG12RTIiLCJzdWIiOiI2eHJ3UjFESG9ZZ3ZjVjlFMGN2b1BLdXBtdkUyIiwiaWF0IjoxNDk4Njc4OTkxLCJleHAiOjE0OTg2ODI1OTEsImVtYWlsIjoibS5yYXNtdXNzZW44NEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwNTE3NTgxNDY0ODYxNjMxMjM3NyJdLCJlbWFpbCI6WyJtLnJhc211c3Nlbjg0QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0"
-	params := fjw.ValidatorParams{Kid: "TestKid", Message: headerPlusClaims}
+	params := fjv.ValidatorParams{Kid: "TestKid", Message: headerPlusClaims}
 
 	// invalid base64
 	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ="
@@ -45,7 +45,7 @@ var _ = Describe("SignatureValidator", func() {
 	var invalidSignature = "eyJhbGciOiJSUzI1NiJ9"
 
 	Context("Given a rejecting KeyFetcher", func() {
-		signatureValidator := fjw.NewSignatureValidator(&rejectingKeyFetcher{})
+		signatureValidator := fjv.NewSignatureValidator(&rejectingKeyFetcher{})
 		Context("And a valid input", func() {
 			It("Should return false", func() {
 				result := signatureValidator.Validate(validSignature, params)
@@ -56,7 +56,7 @@ var _ = Describe("SignatureValidator", func() {
 
 	Context("Given an accepting KeyFetcher", func() {
 		spy := &acceptingKeyFetcher{Output: rsaPublicKey}
-		signatureValidator := fjw.NewSignatureValidator(spy)
+		signatureValidator := fjv.NewSignatureValidator(spy)
 
 		It("Should call the key fetcher with key Id", func() {
 			signatureValidator.Validate(validSignature, params)

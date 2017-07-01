@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"encoding/json"
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io/ioutil"
@@ -16,7 +16,7 @@ var _ = Describe("TokenValidator functional test", func() {
 	It("Should get a real token and try to validate it using the library", func() {
 		token := getFreshToken()
 
-		validator := fjw.NewDefaultTokenValidator("fir-jwtvalidatortest")
+		validator := fjv.NewDefaultTokenValidator("fir-jwtvalidatortest")
 
 		result, err := validator.Validate(token)
 

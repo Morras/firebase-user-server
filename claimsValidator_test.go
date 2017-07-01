@@ -1,7 +1,7 @@
 package firebaseJwtValidator_test
 
 import (
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -9,7 +9,7 @@ import (
 var _ = Describe("HeaderValidator", func() {
 
 	var projectID = "neutrino-1151"
-	var defaultParams = fjw.ValidatorParams{ProjectID: projectID}
+	var defaultParams = fjv.ValidatorParams{ProjectID: projectID}
 
 	// not json
 	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
@@ -29,7 +29,7 @@ var _ = Describe("HeaderValidator", func() {
 	// Audience (and project id) is neutrino-1151
 	var validClaims = "ew0KICAiaXNzIjogImh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9uZXV0cmluby0xMTUxIiwNCiAgImF1ZCI6ICJuZXV0cmluby0xMTUxIiwNCiAgInN1YiI6ICI5U1o5SnZDN0twUEkwUkpHdkFaeE4wc1hUdEgyIiwNCiAgImlhdCI6IDAsDQogICJleHAiOiAyMTQ3NDgzNjQ3DQp9"
 
-	claimsValidator := fjw.ClaimsValidator{}
+	claimsValidator := fjv.ClaimsValidator{}
 
 	Context("Called with a valid string", func() {
 		It("should return true", func() {

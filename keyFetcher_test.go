@@ -11,7 +11,7 @@ import (
 
 	"log"
 
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"time"
@@ -48,7 +48,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 	cert, _ = x509.ParseCertificate(block.Bytes)
 	expectedPublicKey := cert.PublicKey.(*rsa.PublicKey)
 
-	var keyFetcher fjw.KeyFetcher
+	var keyFetcher fjv.KeyFetcher
 	var mock *HttpMock
 	var mockResponse *http.Response
 
@@ -56,7 +56,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 		mockResponse = &http.Response{Body: ioutil.NopCloser(bytes.NewBuffer([]byte(responseContent)))}
 		mockResponse.Header = http.Header{}
 		mock = &HttpMock{Response: mockResponse}
-		keyFetcher = fjw.NewGoogleKeyFetcher(mock)
+		keyFetcher = fjv.NewGoogleKeyFetcher(mock)
 	})
 
 	Context("When no cache exists", func() {
@@ -68,7 +68,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 				keyFetcher.FetchKey(existingKid)
 
 				Expect(mock.CalledCount).To(BeIdenticalTo(1))
-				Expect(mock.Url).To(BeIdenticalTo(fjw.KeyServerURL))
+				Expect(mock.Url).To(BeIdenticalTo(fjv.KeyServerURL))
 			})
 		})
 
@@ -89,7 +89,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 				mockResponse.Header.Add("cache-control", "public, max-age=3, must-revalidate, no-transform")
 
 				_, err := keyFetcher.FetchKey(nonExistingKid)
-				Expect(err).To(BeIdenticalTo(fjw.ErrNoSuchKey))
+				Expect(err).To(BeIdenticalTo(fjv.ErrNoSuchKey))
 			})
 		})
 
@@ -100,7 +100,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 
 				result, err := keyFetcher.FetchKey(existingKid)
 				Expect(result).To(BeNil())
-				Expect(err).To(BeIdenticalTo(fjw.ErrKeyServerConnectionFailed))
+				Expect(err).To(BeIdenticalTo(fjv.ErrKeyServerConnectionFailed))
 			})
 		})
 
@@ -133,10 +133,10 @@ var _ = Describe("GoogleKeyFetcher", func() {
 })
 
 var _ = Describe("Integration test of GoogleKeyFetcher", func() {
-	keyFetcher := fjw.NewGoogleKeyFetcher(&http.Client{})
+	keyFetcher := fjv.NewGoogleKeyFetcher(&http.Client{})
 
 	It("Should return with key not found error but no server error", func() {
 		_, err := keyFetcher.FetchKey("InvalidKeyID")
-		Expect(err).To(BeIdenticalTo(fjw.ErrNoSuchKey))
+		Expect(err).To(BeIdenticalTo(fjv.ErrNoSuchKey))
 	})
 })

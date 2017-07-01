@@ -1,7 +1,7 @@
 package firebaseJwtValidator_test
 
 import (
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,9 +19,9 @@ var _ = Describe("HeaderValidator", func() {
 	// invalid base64
 	var invalidBase64 = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ="
 
-	var emptyParams = fjw.ValidatorParams{}
+	var emptyParams = fjv.ValidatorParams{}
 
-	headerValidator := fjw.HeaderValidator{}
+	headerValidator := fjv.HeaderValidator{}
 
 	Context("Called with a valid string", func() {
 		It("should return true", func() {

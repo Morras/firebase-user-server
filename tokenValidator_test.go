@@ -1,7 +1,7 @@
 package firebaseJwtValidator_test
 
 import (
-	fjw "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"strings"
@@ -10,23 +10,23 @@ import (
 type acceptValidator struct {
 }
 
-func (*acceptValidator) Validate(input string, params fjw.ValidatorParams) bool {
+func (*acceptValidator) Validate(input string, params fjv.ValidatorParams) bool {
 	return true
 }
 
 type rejectValidator struct {
 }
 
-func (r *rejectValidator) Validate(input string, params fjw.ValidatorParams) bool {
+func (r *rejectValidator) Validate(input string, params fjv.ValidatorParams) bool {
 	return false
 }
 
 type spyValidator struct {
 	Input  string
-	Params fjw.ValidatorParams
+	Params fjv.ValidatorParams
 }
 
-func (spy *spyValidator) Validate(input string, params fjw.ValidatorParams) bool {
+func (spy *spyValidator) Validate(input string, params fjv.ValidatorParams) bool {
 	spy.Input = input
 	spy.Params = params
 	return true
@@ -50,29 +50,29 @@ var _ = Describe("TokenValidator", func() {
 	var validToken = "eyJhbGciOiJIUzI1NiIsImtpZCI6IjQ3MjEwNDcxMjA0NyJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.nTxXE3Kiond5qi_e0o0eqh-uZinGqUyOCiLz4i5858E"
 
 	Context("with rejecting header validator", func() {
-		tokenValidator := fjw.NewTokenValidator("project id", &rejectValidator{}, &acceptValidator{}, &acceptValidator{})
+		tokenValidator := fjv.NewTokenValidator("project id", &rejectValidator{}, &acceptValidator{}, &acceptValidator{})
 		It("should reject the validation", func() {
 			result, err := tokenValidator.Validate(validToken)
 			Expect(result).To(BeFalse())
-			Expect(err).To(BeIdenticalTo(fjw.ErrHeaderValidationFailed))
+			Expect(err).To(BeIdenticalTo(fjv.ErrHeaderValidationFailed))
 		})
 	})
 
 	Context("with rejecting claims validator", func() {
-		tokenValidator := fjw.NewTokenValidator("project id", &acceptValidator{}, &rejectValidator{}, &acceptValidator{})
+		tokenValidator := fjv.NewTokenValidator("project id", &acceptValidator{}, &rejectValidator{}, &acceptValidator{})
 		It("should reject the validation", func() {
 			result, err := tokenValidator.Validate(validToken)
 			Expect(result).To(BeFalse())
-			Expect(err).To(BeIdenticalTo(fjw.ErrClaimsValidationFailed))
+			Expect(err).To(BeIdenticalTo(fjv.ErrClaimsValidationFailed))
 		})
 	})
 
 	Context("with rejecting signature validator", func() {
-		tokenValidator := fjw.NewTokenValidator("project id", &acceptValidator{}, &acceptValidator{}, &rejectValidator{})
+		tokenValidator := fjv.NewTokenValidator("project id", &acceptValidator{}, &acceptValidator{}, &rejectValidator{})
 		It("should reject the validation", func() {
 			result, err := tokenValidator.Validate(validToken)
 			Expect(result).To(BeFalse())
-			Expect(err).To(BeIdenticalTo(fjw.ErrSignatureValidationFailed))
+			Expect(err).To(BeIdenticalTo(fjv.ErrSignatureValidationFailed))
 		})
 	})
 
@@ -80,7 +80,7 @@ var _ = Describe("TokenValidator", func() {
 		headerSpy := &spyValidator{}
 		claimsSpy := &spyValidator{}
 		signatureSpy := &spyValidator{}
-		tokenValidator := fjw.NewTokenValidator("project id", headerSpy, claimsSpy, signatureSpy)
+		tokenValidator := fjv.NewTokenValidator("project id", headerSpy, claimsSpy, signatureSpy)
 		Context("and the input is valid", func() {
 			It("should accept the validation", func() {
 				result, err := tokenValidator.Validate(validToken)
@@ -113,7 +113,7 @@ var _ = Describe("TokenValidator", func() {
 			It("should reject the validation", func() {
 				result, err := tokenValidator.Validate("aaa.bbb.ccc.ddd")
 				Expect(result).To(BeFalse())
-				Expect(err).To(BeIdenticalTo(fjw.ErrMalformedToken))
+				Expect(err).To(BeIdenticalTo(fjv.ErrMalformedToken))
 			})
 		})
 
@@ -121,7 +121,7 @@ var _ = Describe("TokenValidator", func() {
 			It("should reject the validation", func() {
 				result, err := tokenValidator.Validate("aaa.bbb")
 				Expect(result).To(BeFalse())
-				Expect(err).To(BeIdenticalTo(fjw.ErrMalformedToken))
+				Expect(err).To(BeIdenticalTo(fjv.ErrMalformedToken))
 			})
 		})
 	})
