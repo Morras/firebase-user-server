@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"strings"
 
+	"encoding/json"
 	fjw "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io/ioutil"
-	"encoding/json"
 	"log"
 )
 
@@ -18,7 +18,10 @@ var _ = Describe("TokenValidator functional test", func() {
 
 		validator := fjw.NewDefaultTokenValidator("fir-jwtvalidatortest")
 
-		Expect(validator.Validate(token)).To(BeTrue())
+		result, err := validator.Validate(token)
+
+		Expect(err).To(BeNil())
+		Expect(result).To(BeTrue())
 	})
 })
 
