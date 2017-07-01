@@ -21,7 +21,7 @@ type TokenValidator struct {
 	signatureValidator Validator
 }
 
-func DefaultTokenValidator(projectID string) *TokenValidator {
+func NewDefaultTokenValidator(projectID string) *TokenValidator {
 	return NewTokenValidator(projectID,
 		&HeaderValidator{},
 		&ClaimsValidator{},
@@ -53,7 +53,7 @@ func (tv *TokenValidator) Validate(token string) (bool, error) {
 		return false, ErrClaimsValidationFailed
 	}
 
-	// We know this will succeed because the header validates
+	// We know this will succeed because the header validated
 	_, h := decodeRawHeader(header)
 	if !tv.signatureValidator.Validate(signature, ValidatorParams{Kid: h.Kid, Message: header + "." + claims}) {
 		return false, ErrSignatureValidationFailed
