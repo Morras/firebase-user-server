@@ -49,12 +49,12 @@ func (hv *DefaultClaimsValidator) Validate(raw string, projectID string) bool {
 
 	now := time.Now().Unix()
 	if c.Iat > now {
-		log.Printf("Unable to validate claims as they are issued in the future %v", c)
+		log.Printf("Unable to validate claims as they are issued in the future %v > %v", c.Iat, now)
 		return false
 	}
 
 	if c.Exp < now {
-		log.Printf("Unable to validate claims as they are expired %v", c)
+		log.Printf("Unable to validate claims as they are expired %v < %v", c.Exp, now)
 		return false
 	}
 
