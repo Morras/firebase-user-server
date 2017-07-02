@@ -40,10 +40,11 @@ import (
 )
 
 func main() {
+  // Use the first command line argument as the token to validate
   token := os.Args[1]
-  //Creates the validator with your project ID
+  // Creates the validator with your project ID
   validator := fjv.NewDefaultTokenValidator("Your-Project-ID")
-  //Validates a token against the Firebase JWT rules.
+  // Validates a token against the Firebase JWT rules.
   valid, err := validator.Validate(token)
 
   fmt.Printf("Token is valid: %v\n", valid)
@@ -56,6 +57,9 @@ func main() {
 I have set up a functional test in a cron job on Travis-ci that logs in a user in a test project I have set up only for this project. 
 This allows the test to get a fresh token and try an validate that.  
 Other than that all classes are unit tested in more or less of a test first fashion.
+
+Testing is done with the [Ginkgo](https://onsi.github.io/ginkgo/) testing framework using [Gomega](https://onsi.github.io/gomega/) matchers, 
+but outside those two packages, everything is made using GOs standard library.
 
 ## Feedback
 
