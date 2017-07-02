@@ -8,7 +8,11 @@ import (
 
 const algorithm = "RS256"
 
-type HeaderValidator struct {
+type HeaderValidator interface {
+	Validate(string) bool
+}
+
+type DefaultHeaderValidator struct {
 }
 
 type header struct {
@@ -32,7 +36,7 @@ func decodeRawHeader(raw string) (bool, header) {
 	return true, h
 }
 
-func (hv *HeaderValidator) Validate(raw string, params ValidatorParams) bool {
+func (hv *DefaultHeaderValidator) Validate(raw string) bool {
 	success, h := decodeRawHeader(raw)
 	if !success {
 		return false

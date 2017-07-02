@@ -5,36 +5,26 @@ import (
 	"strings"
 )
 
-//This is cheating, header validator do not need it, claims validator needs ProjectID and the last two are needed by signature validator
-type ValidatorParams struct {
-	ProjectID, Kid, Message string
-}
-
-type Validator interface {
-	Validate(string, ValidatorParams) bool
-}
-
 type TokenValidator struct {
 	projectID          string
-	headerValidator    Validator
-	claimsValidator    Validator
-	signatureValidator Validator
+	headerValidator    HeaderValidator
+	claimsValidator    ClaimsValidator
+	signatureValidator SignatureValidator
 }
 
 func NewDefaultTokenValidator(projectID string) *TokenValidator {
 	return NewTokenValidator(projectID,
-		&HeaderValidator{},
-		&ClaimsValidator{},
-		NewSignatureValidator(NewGoogleKeyFetcher(&http.Client{})))
+		&DefaultHeaderValidator{},
+		&DefaultClaimsValidator{},
+		NewDefaultSignatureValidator(NewGoogleKeyFetcher(&http.Client{})))
 }
 
-func NewTokenValidator(projectID string, headerValidator Validator, claimsValidator Validator, signatureValidator Validator) *TokenValidator {
+func NewTokenValidator(projectID string, headerValidator HeaderValidator, claimsValidator ClaimsValidator, signatureValidator SignatureValidator) *TokenValidator {
 	t := &TokenValidator{projectID: projectID, headerValidator: headerValidator, claimsValidator: claimsValidator, signatureValidator: signatureValidator}
 	return t
 }
 
 func (tv *TokenValidator) Validate(token string) (bool, error) {
-
 	split := strings.Split(token, ".")
 
 	if len(split) != 3 {
@@ -45,17 +35,17 @@ func (tv *TokenValidator) Validate(token string) (bool, error) {
 	claims := split[1]
 	signature := split[2]
 
-	if !tv.headerValidator.Validate(header, ValidatorParams{}) {
+	if !tv.headerValidator.Validate(header) {
 		return false, ErrHeaderValidationFailed
 	}
 
-	if !tv.claimsValidator.Validate(claims, ValidatorParams{ProjectID: tv.projectID}) {
+	if !tv.claimsValidator.Validate(claims, tv.projectID) {
 		return false, ErrClaimsValidationFailed
 	}
 
 	// We know this will succeed because the header validated
 	_, h := decodeRawHeader(header)
-	if !tv.signatureValidator.Validate(signature, ValidatorParams{Kid: h.Kid, Message: header + "." + claims}) {
+	if !tv.signatureValidator.Validate(signature, h.Kid, header + "." + claims) {
 		return false, ErrSignatureValidationFailed
 	}
 

@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+type ClaimsValidator interface {
+	Validate(string, string) bool
+}
+
 const issuerPrefix = "https://securetoken.google.com/"
 
 type claims struct {
@@ -15,7 +19,6 @@ type claims struct {
 }
 
 func decodeRawClaims(raw string) (bool, claims) {
-
 	jsonStr, err := base64.RawURLEncoding.DecodeString(raw)
 	if err != nil {
 		log.Printf("Unable to validate claims due to input not being Base64 %v", raw)
@@ -31,10 +34,10 @@ func decodeRawClaims(raw string) (bool, claims) {
 	return true, c
 }
 
-type ClaimsValidator struct {
+type DefaultClaimsValidator struct {
 }
 
-func (hv *ClaimsValidator) Validate(raw string, params ValidatorParams) bool {
+func (hv *DefaultClaimsValidator) Validate(raw string, projectID string) bool {
 	success, c := decodeRawClaims(raw)
 	if !success {
 		return false
@@ -55,12 +58,12 @@ func (hv *ClaimsValidator) Validate(raw string, params ValidatorParams) bool {
 		return false
 	}
 
-	if c.Iss != issuerPrefix+params.ProjectID {
+	if c.Iss != issuerPrefix+projectID {
 		log.Printf("Unable to validate claims due to invalid issuer %v", c)
 		return false
 	}
 
-	if c.Aud != params.ProjectID {
+	if c.Aud != projectID {
 		log.Printf("Unable to validate claims due to invalid audience %v", c)
 		return false
 	}

@@ -8,17 +8,22 @@ import (
 	"log"
 )
 
-type SignatureValidator struct {
+
+type SignatureValidator interface {
+	Validate(signature string, kid string, message string) bool
+}
+
+type DefaultSignatureValidator struct {
 	keyFetcher KeyFetcher
 }
 
-func NewSignatureValidator(kf KeyFetcher) *SignatureValidator {
-	return &SignatureValidator{keyFetcher: kf}
+func NewDefaultSignatureValidator(kf KeyFetcher) *DefaultSignatureValidator {
+	return &DefaultSignatureValidator{keyFetcher: kf}
 }
 
-func (sv *SignatureValidator) Validate(signature string, params ValidatorParams) bool {
+func (sv *DefaultSignatureValidator) Validate(signature string, kid string, message string) bool {
 
-	publicKey, err := sv.keyFetcher.FetchKey(params.Kid)
+	publicKey, err := sv.keyFetcher.FetchKey(kid)
 	if err != nil {
 		return false
 	}
@@ -29,10 +34,10 @@ func (sv *SignatureValidator) Validate(signature string, params ValidatorParams)
 		return false
 	}
 
-	hashed := sha256.Sum256([]byte(params.Message))
+	hashed := sha256.Sum256([]byte(message))
 	err = rsa.VerifyPKCS1v15(publicKey, crypto.SHA256, hashed[:], []byte(decodedSig))
 	if err != nil {
-		log.Printf("Error verifying signature %v for message %v with publicKey %v. Error was %v", signature, params.Message, publicKey, err)
+		log.Printf("Error verifying signature %v for message %v with publicKey %v. Error was %v", signature, message, publicKey, err)
 		return false
 	}
 	return true

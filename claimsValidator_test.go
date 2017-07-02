@@ -6,10 +6,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("HeaderValidator", func() {
+var _ = Describe("DefaultHeaderValidator", func() {
 
 	var projectID = "neutrino-1151"
-	var defaultParams = fjv.ValidatorParams{ProjectID: projectID}
 
 	// not json
 	var invalidJson = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwIiwgZm9vfQ"
@@ -29,60 +28,60 @@ var _ = Describe("HeaderValidator", func() {
 	// Audience (and project id) is neutrino-1151
 	var validClaims = "ew0KICAiaXNzIjogImh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9uZXV0cmluby0xMTUxIiwNCiAgImF1ZCI6ICJuZXV0cmluby0xMTUxIiwNCiAgInN1YiI6ICI5U1o5SnZDN0twUEkwUkpHdkFaeE4wc1hUdEgyIiwNCiAgImlhdCI6IDAsDQogICJleHAiOiAyMTQ3NDgzNjQ3DQp9"
 
-	claimsValidator := fjv.ClaimsValidator{}
+	claimsValidator := fjv.DefaultClaimsValidator{}
 
 	Context("Called with a valid string", func() {
 		It("should return true", func() {
-			result := claimsValidator.Validate(validClaims, defaultParams)
+			result := claimsValidator.Validate(validClaims, projectID)
 			Expect(result).To(BeTrue())
 		})
 	})
 
 	Context("Called with invalid json", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(invalidJson, defaultParams)
+			result := claimsValidator.Validate(invalidJson, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with invalid base64", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(invalidBase64, defaultParams)
+			result := claimsValidator.Validate(invalidBase64, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with claims with empty subject", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(emptySub, defaultParams)
+			result := claimsValidator.Validate(emptySub, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with claims that has expired", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(expiredInPast, defaultParams)
+			result := claimsValidator.Validate(expiredInPast, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with claims that are issued in the future", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(iatInFuture, defaultParams)
+			result := claimsValidator.Validate(iatInFuture, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with claims with wrong audience", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(invalidAudience, defaultParams)
+			result := claimsValidator.Validate(invalidAudience, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with claims with wrong issuer", func() {
 		It("should return false", func() {
-			result := claimsValidator.Validate(invalidIssuer, defaultParams)
+			result := claimsValidator.Validate(invalidIssuer, projectID)
 			Expect(result).To(BeFalse())
 		})
 	})
