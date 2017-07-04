@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Section for setting up  mocks 
+// Section for setting up  mocks
 
 type acceptHeaderValidator struct {
 	Header string

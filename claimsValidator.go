@@ -7,8 +7,11 @@ import (
 	"time"
 )
 
+// A ClaimsValidator validates the claims part of a JWT token.
 type ClaimsValidator interface {
-	Validate(string, string) bool
+	// Validate determines whether the JWT claims are valid for a Firebase issued JWT when the projects id is projectID.
+	// The claims are supplied in the base64 encoded value that is read directly from the JWT.
+	Validate(claims string, projectID string) bool
 }
 
 const issuerPrefix = "https://securetoken.google.com/"
@@ -34,11 +37,21 @@ func decodeRawClaims(raw string) (bool, claims) {
 	return true, c
 }
 
+// DefaultClaimsValidator implements the logic set out in the Firebase documentation to validate the JWT claims.
 type DefaultClaimsValidator struct {
 }
 
-func (hv *DefaultClaimsValidator) Validate(raw string, projectID string) bool {
-	success, c := decodeRawClaims(raw)
+// Validate returns true if the claims provided in the raw base64 encoded value from the JWT
+// lives up to the requirements from Firebases documentation for a project with projectID as id.
+//
+// The rules are:
+//   - Sub must exist and be non empty
+//   - iat must not be after now
+//   - exp must not be before now
+//   - aud must be the same as projectID
+//   - iss must be https://securetoken.google.com/<projectID>
+func (hv *DefaultClaimsValidator) Validate(claims string, projectID string) bool {
+	success, c := decodeRawClaims(claims)
 	if !success {
 		return false
 	}

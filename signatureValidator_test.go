@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Section for setting up  mocks 
+// Section for setting up  mocks
 type rejectingKeyFetcher struct{}
 
 func (*rejectingKeyFetcher) FetchKey(kid string) (*rsa.PublicKey, error) {

@@ -8,10 +8,14 @@ import (
 
 const algorithm = "RS256"
 
+// A HeaderValidator validates the claims part of a JWT token.
 type HeaderValidator interface {
-	Validate(string) bool
+	// Validate determines whether the JWT header are valid for a Firebase issued JWT.
+	// The Header are supplied in the base64 encoded value that is read directly from the JWT.
+	Validate(header string) bool
 }
 
+// DefaultHeaderValidator implements the logic set out in the Firebase documentation to validate the JWT header.
 type DefaultHeaderValidator struct {
 }
 
@@ -20,7 +24,6 @@ type header struct {
 }
 
 func decodeRawHeader(raw string) (bool, header) {
-
 	jsonStr, err := base64.RawURLEncoding.DecodeString(raw)
 	if err != nil {
 		log.Printf("Unable to validate header due to input not being Base64 %v", raw)
@@ -36,6 +39,12 @@ func decodeRawHeader(raw string) (bool, header) {
 	return true, h
 }
 
+// Validate determines whether the JWT header are valid for a Firebase issued JWT.
+// The Header are supplied in the base64 encoded value that is read directly from the JWT.
+//
+// The rules for header validation is that
+//   - alg must be RS256
+//   - kid must exist
 func (hv *DefaultHeaderValidator) Validate(raw string) bool {
 	success, h := decodeRawHeader(raw)
 	if !success {

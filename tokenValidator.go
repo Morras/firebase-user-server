@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// TokenValidator is a struct to hold validators used to validate
+// a JWT against the rules set out by the Firebase project.
 type TokenValidator struct {
 	projectID          string
 	headerValidator    HeaderValidator
@@ -12,18 +14,27 @@ type TokenValidator struct {
 	signatureValidator SignatureValidator
 }
 
+// NewDefaultTokenValidator is the default token validator that validates using the
+// DefaultHeaderValidator, DefaultClaimsValidator and DefaultSignatureValidator
+// to validate a token against the rules set out by the Firebase projects documentation.
 func NewDefaultTokenValidator(projectID string) *TokenValidator {
 	return NewTokenValidator(projectID,
 		&DefaultHeaderValidator{},
 		&DefaultClaimsValidator{},
-		NewDefaultSignatureValidator(NewGoogleKeyFetcher(&http.Client{})))
+		NewDefaultSignatureValidator(NewCachedKeyFetcher(&http.Client{})))
 }
 
+// NewTokenValidator allows you to customize the TokenValidator by substituting
+// validators for the individual JWT segments. See the validator interfaces
+// for implementation details on the specific validators.
 func NewTokenValidator(projectID string, headerValidator HeaderValidator, claimsValidator ClaimsValidator, signatureValidator SignatureValidator) *TokenValidator {
 	t := &TokenValidator{projectID: projectID, headerValidator: headerValidator, claimsValidator: claimsValidator, signatureValidator: signatureValidator}
 	return t
 }
 
+// Validate a jwt token against the rules set out in the TokenValidators three validators.
+// Return result of the validation and an error telling which part of the validation went
+// wrong if the result is false.
 func (tv *TokenValidator) Validate(token string) (bool, error) {
 	split := strings.Split(token, ".")
 
@@ -45,7 +56,7 @@ func (tv *TokenValidator) Validate(token string) (bool, error) {
 
 	// We know this will succeed because the header validated
 	_, h := decodeRawHeader(header)
-	if !tv.signatureValidator.Validate(signature, h.Kid, header + "." + claims) {
+	if !tv.signatureValidator.Validate(signature, h.Kid, header+"."+claims) {
 		return false, ErrSignatureValidationFailed
 	}
 

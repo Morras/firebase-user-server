@@ -56,7 +56,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 		mockResponse = &http.Response{Body: ioutil.NopCloser(bytes.NewBuffer([]byte(responseContent)))}
 		mockResponse.Header = http.Header{}
 		mock = &HttpMock{Response: mockResponse}
-		keyFetcher = fjv.NewGoogleKeyFetcher(mock)
+		keyFetcher = fjv.NewCachedKeyFetcher(mock)
 	})
 
 	Context("When no cache exists", func() {
@@ -133,7 +133,7 @@ var _ = Describe("GoogleKeyFetcher", func() {
 })
 
 var _ = Describe("Integration test of GoogleKeyFetcher", func() {
-	keyFetcher := fjv.NewGoogleKeyFetcher(&http.Client{})
+	keyFetcher := fjv.NewCachedKeyFetcher(&http.Client{})
 
 	It("Should return with key not found error but no server error", func() {
 		_, err := keyFetcher.FetchKey("InvalidKeyID")

@@ -23,7 +23,7 @@ var _ = Describe("DefaultHeaderValidator", func() {
 
 	Context("Called with a valid string", func() {
 		It("should return true", func() {
-			result := headerValidator.Validate(validHeader,)
+			result := headerValidator.Validate(validHeader)
 			Expect(result).To(BeTrue())
 		})
 	})
@@ -37,14 +37,14 @@ var _ = Describe("DefaultHeaderValidator", func() {
 
 	Context("Called with string missing kid", func() {
 		It("should return false", func() {
-			result := headerValidator.Validate(noKid,)
+			result := headerValidator.Validate(noKid)
 			Expect(result).To(BeFalse())
 		})
 	})
 
 	Context("Called with string with invalid algorithm", func() {
 		It("should return false", func() {
-			result := headerValidator.Validate(invalidAlgorithm,)
+			result := headerValidator.Validate(invalidAlgorithm)
 			Expect(result).To(BeFalse())
 		})
 	})

@@ -12,28 +12,35 @@ import (
 	"time"
 )
 
+// KeyFetcher interface implementations should get the public key needed to validate a signature based on the keys ID.
 type KeyFetcher interface {
 	FetchKey(kid string) (*rsa.PublicKey, error)
 }
 
+// KeyServerURL points to the location that the CachedKeyFetcher will retrieve its keys from.
 const KeyServerURL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
 
-type HttpClient interface {
+// HTTPClient is used to call an URL with a get method and read the response.
+type HTTPClient interface {
 	Get(string) (*http.Response, error)
 }
 
-type GoogleKeyFetcher struct {
-	httpClient      HttpClient
+// CachedKeyFetcher is an implementation of KeyFetcher
+type CachedKeyFetcher struct {
+	httpClient      HTTPClient
 	cache           map[string]string
 	cacheExpiration time.Time
 }
 
-func NewGoogleKeyFetcher(httpClient HttpClient) *GoogleKeyFetcher {
-	return &GoogleKeyFetcher{httpClient: httpClient}
+// NewCachedKeyFetcher creates a new CachedKeyFetcher using httpClient to get data from the key server.
+func NewCachedKeyFetcher(httpClient HTTPClient) *CachedKeyFetcher {
+	return &CachedKeyFetcher{httpClient: httpClient}
 }
 
-func (kf *GoogleKeyFetcher) FetchKey(kid string) (*rsa.PublicKey, error) {
-
+// FetchKey returns a PublicKey from its local cache if the cache is not expired.
+// If the key does not exist and the cache is not expired, it returns nil and an error.
+// The cache expiration is based on the cache-control: max-age as described in the Firebase documentation.
+func (kf *CachedKeyFetcher) FetchKey(kid string) (*rsa.PublicKey, error) {
 	if time.Now().After(kf.cacheExpiration) {
 		err := kf.refreshCache()
 		if err != nil {
@@ -52,7 +59,7 @@ func (kf *GoogleKeyFetcher) FetchKey(kid string) (*rsa.PublicKey, error) {
 	return nil, ErrNoSuchKey
 }
 
-func (kf *GoogleKeyFetcher) refreshCache() error {
+func (kf *CachedKeyFetcher) refreshCache() error {
 	resp, err := kf.httpClient.Get(KeyServerURL)
 
 	if err != nil || resp.StatusCode != 200 {
@@ -80,7 +87,7 @@ func (kf *GoogleKeyFetcher) refreshCache() error {
 	return nil
 }
 
-func (kf *GoogleKeyFetcher) updateCacheExpiration(resp *http.Response) {
+func (kf *CachedKeyFetcher) updateCacheExpiration(resp *http.Response) {
 
 	cacheControl := resp.Header.Get("cache-control")
 
