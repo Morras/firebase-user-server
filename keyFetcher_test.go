@@ -24,10 +24,8 @@ type HttpMock struct {
 }
 
 func (h *HttpMock) Get(url string) (*http.Response, error) {
-	log.Printf("Get called count was %v", h.CalledCount)
 	h.Url = url
 	h.CalledCount += 1
-	log.Printf("Get called count is now %v", h.CalledCount)
 	return h.Response, nil
 }
 
