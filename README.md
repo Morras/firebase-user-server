@@ -14,7 +14,7 @@ The package validates a token as to the rules described by the Firebase document
 
 ### JWT Claims
 * **exp** = now or in the future
-* **iat** = now or in the past
+* **iat** = now or in the past. Allows for IAT to be up to ten seconds in the future to avoid problems that arose when the validating server was not completely in sync with the JWT issuing server.
 * **aud** = a supplied firebase project id
 * **iss** = `https://securetoken.google.com/<projectId>` where `<projectID>` is the same value as used in **aud**
 * **sub** exists
