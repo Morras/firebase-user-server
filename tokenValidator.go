@@ -20,7 +20,7 @@ type TokenValidator struct {
 func NewDefaultTokenValidator(projectID string) *TokenValidator {
 	return NewTokenValidator(projectID,
 		&DefaultHeaderValidator{},
-		&DefaultClaimsValidator{},
+		NewDefaultClaimsValidator(),
 		NewDefaultSignatureValidator(NewCachedKeyFetcher(&http.Client{})))
 }
 

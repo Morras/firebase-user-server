@@ -39,6 +39,12 @@ func decodeRawClaims(raw string) (bool, claims) {
 
 // DefaultClaimsValidator implements the logic set out in the Firebase documentation to validate the JWT claims.
 type DefaultClaimsValidator struct {
+	// IATTolerance allows for some discrepancy between the time of the issuing server and the time of the validating service.
+	iatTolerance int64
+}
+
+func NewDefaultClaimsValidator() *DefaultClaimsValidator {
+	return &DefaultClaimsValidator{iatTolerance: 10}
 }
 
 // Validate returns true if the claims provided in the raw base64 encoded value from the JWT
@@ -61,7 +67,7 @@ func (hv *DefaultClaimsValidator) Validate(claims string, projectID string) bool
 	}
 
 	now := time.Now().Unix()
-	if c.Iat > now {
+	if c.Iat > now+hv.iatTolerance {
 		log.Printf("Unable to validate claims as they are issued in the future %v > %v", c.Iat, now)
 		return false
 	}

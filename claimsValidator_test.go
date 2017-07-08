@@ -28,7 +28,7 @@ var _ = Describe("DefaultHeaderValidator", func() {
 	// Audience (and project id) is neutrino-1151
 	var validClaims = "ew0KICAiaXNzIjogImh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9uZXV0cmluby0xMTUxIiwNCiAgImF1ZCI6ICJuZXV0cmluby0xMTUxIiwNCiAgInN1YiI6ICI5U1o5SnZDN0twUEkwUkpHdkFaeE4wc1hUdEgyIiwNCiAgImlhdCI6IDAsDQogICJleHAiOiAyMTQ3NDgzNjQ3DQp9"
 
-	claimsValidator := fjv.DefaultClaimsValidator{}
+	claimsValidator := fjv.NewDefaultClaimsValidator()
 
 	Context("Called with a valid string", func() {
 		It("should return true", func() {
