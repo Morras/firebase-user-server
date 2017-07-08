@@ -9,8 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"log"
-
 	fjv "github.com/morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
