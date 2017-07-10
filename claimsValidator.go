@@ -21,7 +21,9 @@ type claims struct {
 	Exp, Iat      int64
 }
 
-func decodeRawClaims(raw string) (bool, claims) {
+// DecodeRawClaims decode Base64 encoded claims, but does no
+// validation outside making sure it is valid Base64 and json.
+func DecodeRawClaims(raw string) (bool, claims) {
 	jsonStr, err := base64.RawURLEncoding.DecodeString(raw)
 	if err != nil {
 		log.Printf("Unable to validate claims due to input not being Base64 %v", raw)
@@ -57,7 +59,7 @@ func NewDefaultClaimsValidator() *DefaultClaimsValidator {
 //   - aud must be the same as projectID
 //   - iss must be https://securetoken.google.com/<projectID>
 func (hv *DefaultClaimsValidator) Validate(claims string, projectID string) bool {
-	success, c := decodeRawClaims(claims)
+	success, c := DecodeRawClaims(claims)
 	if !success {
 		return false
 	}
