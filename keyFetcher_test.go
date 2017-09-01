@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	fjv "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/Morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"time"

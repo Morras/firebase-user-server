@@ -1,7 +1,7 @@
 package firebaseJwtValidator_test
 
 import (
-	fjv "github.com/morras/firebaseJwtValidator"
+	fjv "github.com/Morras/firebaseJwtValidator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

@@ -35,7 +35,7 @@ package main
 
 import (
   "fmt"
-  fjv "github.com/morras/firebaseJwtValidator"
+  fjv "github.com/Morras/firebaseJwtValidator"
   "os"
 )
 
