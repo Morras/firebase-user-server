@@ -11,7 +11,7 @@ before_install:
   - go get github.com/modocache/gover
 
 script:
-  - ginkgo -r --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --compilers=2 --coverpkg github.com/morras/firebaseJwtValidator
+  - ginkgo -r --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --compilers=2 --coverpkg github.com/Morras/firebaseJwtValidator
 
 after_success:
   - gover . coverage.txt
